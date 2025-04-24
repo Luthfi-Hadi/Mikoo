@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tangkep Cay sama Mikoo!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Calibri', sans-serif;
+      background: #ffe6f0;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: #ff69b4;
+      margin: 16px auto;
+      font-size: 6vw;
+    }
+
+    #game-area {
+      position: relative;
+      width: 100vw;
+      height: 60vh;
+      background: #fff5fb;
+      border: 3px dashed #ffaad4;
+      margin: 1em auto;
+      overflow: hidden;
+      display: none;
+    }
+
+    .cat {
+      width: 12vw;
+      height: 12vw;
+      max-width: 80px;
+      max-height: 80px;
+      object-fit: cover;
+      position: absolute;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform 0.2s;
+    }
+
+    .cat:hover {
+      transform: scale(1.1);
+    }
+
+    #score, #timer {
+      font-size: 5vw;
+      color: #d63384;
+      margin: 0.5em;
+    }
+
+    .message {
+      font-size: 4vw;
+      color: #ff85c1;
+      margin-top: 10px;
+    }
+
+    #start-btn, #replay-btn {
+      background: #ff8fc3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 4.5vw;
+      cursor: pointer;
+      margin: 1em;
+    }
+
+    #end-screen {
+      display: none;
+      font-size: 5vw;
+      color: #e83e8c;
+      margin-top: 1em;
+    }
+
+    @media (min-width: 768px) {
+      h1 { font-size: 3vw; }
+      #score, #timer, .message { font-size: 20px; }
+      #start-btn, #replay-btn { font-size: 18px; }
+      #end-screen { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎀 Tangkep Cay sama Mikoo! 🎀</h1>
+  <div id="timer">Timer: 30</div>
+  <div id="score">Skor: 0</div>
+  <div id="game-area"></div>
+  <button id="start-btn">Play 🐱</button>
+  <div class="message" id="message"></div>
+  <div id="end-screen">
+    <p id="final-score"></p>
+    <button id="replay-btn">Main Lagi 💖</button>
+  </div>
+
+  <script>
+    const gameArea = document.getElementById("game-area");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const message = document.getElementById("message");
+    const startBtn = document.getElementById("start-btn");
+    const endScreen = document.getElementById("end-screen");
+    const finalScore = document.getElementById("final-score");
+    const replayBtn = document.getElementById("replay-btn");
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameInterval, timerInterval;
+
+    const loyImage = "WhatsApp Image 2025-04-24 at 23.28.46_0abfebce.jpg";
+    const kucingKW = ["meme-kucing-minta-maaf.jpg", "f79e5203f41bdaaf1a5b4176f98a8736.jpg"];
+
+    function randomPosition() {
+      const x = Math.random() * (gameArea.clientWidth - 80);
+      const y = Math.random() * (gameArea.clientHeight - 80);
+      return { x, y };
+    }
+
+    function spawnCat() {
+      const isLoyi = Math.random() > 0.3;
+      const img = document.createElement("img");
+      img.src = isLoyi ? loyImage : kucingKW[Math.floor(Math.random() * kucingKW.length)];
+      img.classList.add("cat");
+
+      const { x, y } = randomPosition();
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
+
+      img.onclick = () => {
+        if (isLoyi) {
+          score++;
+          scoreDisplay.textContent = `Skor: ${score}`;
+          message.textContent = "Meow~ bener ini Cay sama Miko! 🐾";
+        } else {
+          message.textContent = "Wlee~ Itu bukan Miko sama Cayy 😿";
+        }
+        gameArea.removeChild(img);
+      };
+
+      gameArea.appendChild(img);
+
+      setTimeout(() => {
+        if (img.parentElement) gameArea.removeChild(img);
+      }, 1500);
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      scoreDisplay.textContent = `Skor: ${score}`;
+      timerDisplay.textContent = `Timer: ${timeLeft}`;
+      message.textContent = "";
+      endScreen.style.display = "none";
+      startBtn.style.display = "none";
+      gameArea.style.display = "block";
+
+      gameInterval = setInterval(spawnCat, 800);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Timer: ${timeLeft}`;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+      gameArea.style.display = "none";
+      endScreen.style.display = "block";
+      finalScore.textContent = `Yeey kamu berhasil nangkep ${score} cay sama mikoo! 🥰`;
+    }
+
+    startBtn.onclick = startGame;
+    replayBtn.onclick = startGame;
+  </script>
+</body>
+</html>
